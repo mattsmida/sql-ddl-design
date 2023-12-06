@@ -6,8 +6,8 @@ CREATE TABLE stars(
 
 CREATE TABLE planets(
     planet VARCHAR(50) PRIMARY KEY,
-    orbit_star VARCHAR(50) NOT NULL REFERENCES stars,
-    orbital_period FLOAT NOT NULL
+    star VARCHAR(50) NOT NULL REFERENCES stars,
+    orbital_period_in_yrs FLOAT NOT NULL
 );
 
 CREATE TABLE moons(
@@ -22,7 +22,7 @@ INSERT INTO stars(star, temp_in_kelvin)
         ('Proxima Centauri', 3042),
         ('Gliese 876', 3192);
 
-INSERT INTO planets(planet, orbit_star, orbital_period)
+INSERT INTO planets(planet, star, orbital_period_in_yrs)
     VALUES
         ('Earth', 'The Sun', 1.00),
         ('Mars', 'The Sun', 1.882),
@@ -36,11 +36,14 @@ INSERT INTO moons(moon, planet)
         ('Phobos', 'Mars'),
         ('Deimos', 'Mars');
 
+--aliases for clarity--
+SELECT p.planet, p.star, COUNT(m.planet) as moon_count
+    FROM planets AS p
+        LEFT JOIN moons AS m
+            ON m.planet = p.planet
+    GROUP BY p.planet
+    ORDER BY p.planet ASC;
 
-SELECT planets.planet, planets.orbit_star, COUNT(moons.planet) as moon_count
-    FROM planets
-        LEFT JOIN moons ON moons.planet = planets.planet
-            GROUP BY planets.planet
-                ORDER BY planets.planet ASC;
+--GROUP BY necessity in COUNT aggregate queries --
 
 
